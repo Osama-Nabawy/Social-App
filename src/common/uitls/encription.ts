@@ -16,9 +16,9 @@ export function decryption(encryptedData: string) {
   const decipher = crypto.createDecipheriv(
     "aes-256-cbc",
     Buffer.from("12345678123456781234567812345678"),
-    Buffer.from(iv, "hex"),
+    Buffer.from(iv as string, "hex"),
   );
-  let decryptedValue = decipher.update(encryptedValue, "hex", "utf-8");
+  let decryptedValue = decipher.update(encryptedValue as string, "hex", "utf-8");
 
   decryptedValue += decipher.final("utf-8");
   return decryptedValue;

@@ -5,6 +5,7 @@ import { connectRedis } from "./DB/redis.connection";
 import dotenv from "dotenv";
 import { Redis_Url } from "./config";
 import { BadRequestException } from "./common/uitls/error";
+import postRouter from "./module/post/post.controller"
 
 
 export function bootstrap() {
@@ -15,6 +16,7 @@ export function bootstrap() {
   const port = 3000; 
   app.use(express.json())
   app.use("/auth", authRoutes);
+  app.use("/post",postRouter)
   
   app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 return res. status((error.cause as number) |  500).json({

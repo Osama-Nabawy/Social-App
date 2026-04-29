@@ -13,7 +13,7 @@ const userSchema = new mongoose_1.Schema({
             return false;
         }
     },
-    phone: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
     profilePicture: { type: String },
     role: { type: Number, enum: common_1.SYS_ROLE, default: common_1.SYS_ROLE.user },
     provider: { type: Number, enum: common_1.SYS_PROVIDER, default: common_1.SYS_PROVIDER.system },

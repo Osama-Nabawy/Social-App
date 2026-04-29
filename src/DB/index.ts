@@ -1,3 +1,5 @@
 export * from "./DB.connection"
 export * from "./redis.connection"
 export * from "./model/user/user.repository"
+export * from "./redis.repository"
+export * from "./model/post/post.repository"

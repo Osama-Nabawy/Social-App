@@ -18,3 +18,5 @@ __exportStar(require("./user.interface"), exports);
 __exportStar(require("./req.interface"), exports);
 __exportStar(require("./token.interface"), exports);
 __exportStar(require("./email.interface"), exports);
+__exportStar(require("./post.interface"), exports);
+__exportStar(require("./reaction.interface"), exports);

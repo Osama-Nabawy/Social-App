@@ -11,11 +11,16 @@ class AuthService {
     }
     async sendOtp(body) {
         const { email } = body;
-        const otpDoc = await DB_1.redisClient.exists(`${email}:otp`);
+        const userExist = await this.userRepo.findOne({ email });
+        const userExistInSignupCache = await (0, DB_1.getCache)(`${email}:signup`);
+        if (!userExist && !userExistInSignupCache) {
+            throw new common_1.BadRequestException("invalid email");
+        }
+        const otpDoc = await (0, DB_1.existsCache)(`${email}:otp`);
         if (otpDoc)
             throw new common_1.BadRequestException("you have allready otp");
         const otp = Math.floor(100000 + Math.random() * 900000);
-        await DB_1.redisClient.set(`${email}:otp`, otp, { EX: 3 * 60 });
+        await (0, DB_1.setCache)(`${email}:otp`, otp, 3 * 60);
         (0, common_2.sendEmail)({
             to: email,
             subject: "verify your account",
@@ -28,7 +33,7 @@ class AuthService {
             throw new common_1.NotFoundException("User already exists");
         }
         signupDTO.password = await (0, common_1.hash)(signupDTO.password);
-        DB_1.redisClient.set(`${signupDTO.email}:signup`, JSON.stringify(signupDTO), { EX: 5 * 60 * 60 * 24 });
+        await (0, DB_1.setCache)(`${signupDTO.email}:signup`, JSON.stringify(signupDTO), 5 * 60 * 60 * 24);
         await this.sendOtp({ email: signupDTO.email });
     }
     async login(loginDTO) {
@@ -48,13 +53,16 @@ class AuthService {
     ;
     async verifyAccount(body) {
         const { otp, email } = body;
-        const otpDoc = await DB_1.redisClient.exists(`${email}:otp`);
+        const otpDoc = await (0, DB_1.getCache)(`${email}:otp`);
         if (!otpDoc)
             throw new common_1.BadRequestException("expired otp !");
-        let data = await DB_1.redisClient.get(`${email}:signup`);
+        if (otp !== otpDoc) {
+            throw new common_1.BadRequestException("Wrong OTP");
+        }
+        let data = await (0, DB_1.getCache)(`${email}:signup`);
         await this.userRepo.create(JSON.parse(data?.toString() || ""));
-        await DB_1.redisClient.del(`${email}:signup`);
-        await DB_1.redisClient.del(`${email}:otp`);
+        await (0, DB_1.deleteCache)(`${email}:signup`);
+        await (0, DB_1.deleteCache)(`${email}:otp`);
         return true;
     }
     ;
@@ -73,21 +81,37 @@ class AuthService {
         if (!payload.deviceId) {
             throw new common_1.BadRequestException("invalid refresh token");
         }
-        const cashRefreshToken = await DB_1.redisClient.get(`rt__${payload.email}__${payload.deviceId}`);
+        const cashRefreshToken = await (0, DB_1.getCache)(`rt__${payload.email}__${payload.deviceId}`);
         if (!cashRefreshToken)
             throw new common_1.BadRequestException("invalid refresh token");
         if (cashRefreshToken !== Authorization) {
             await this.logOutFromAllDevices({ userId: payload.sub });
-            await DB_1.redisClient.del(`rt__${payload.email}__${payload.deviceId}`);
+            await (0, DB_1.deleteCache)(`rt__${payload.email}__${payload.deviceId}`);
             throw new common_1.BadRequestException("invalid refresh token");
         }
         const newTokens = {
             accessToken: (0, common_1.createAccessToken)(payload.sub, payload.username, payload.email, payload.deviceId),
             refreshToken: (0, common_1.createRefreshToken)(payload.sub, payload.username, payload.email, payload.deviceId),
         };
-        await DB_1.redisClient.set(`rt__${payload.email}__${payload.deviceId}`, newTokens.refreshToken);
+        await (0, DB_1.setCache)(`rt__${payload.email}__${payload.deviceId}`, newTokens.refreshToken);
         return newTokens;
     }
     ;
+    async resetPassword({ email, newPassword, otp }) {
+        const userExist = await this.userRepo.findOne({ email });
+        if (!userExist) {
+            throw new common_1.NotFoundException("User not found");
+        }
+        const otpDoc = await (0, DB_1.existsCache)(`${email}:otp`);
+        if (!otpDoc)
+            throw new common_1.BadRequestException("expired otp !");
+        const cachedOtp = await (0, DB_1.getCache)(`${email}:otp`);
+        if (cachedOtp !== otp) {
+            throw new common_1.BadRequestException("invalid otp");
+        }
+        const hashedPassword = await (0, common_1.hash)(newPassword);
+        await this.userRepo.updateOne({ email }, { password: hashedPassword });
+        await (0, DB_1.deleteCache)(`${email}:otp`);
+    }
 }
 exports.authService = new AuthService();

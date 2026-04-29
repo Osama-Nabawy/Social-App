@@ -3,7 +3,7 @@ export interface SignupDTO  {
     userName: string,
     password: string,
     age: number,
-    phoneNumber?:string
+    phoneNumber:string
 }
 
 export interface LoginDTO{
@@ -22,6 +22,7 @@ export interface verifyOtpDTO {
 }
 export interface refreshTokenServiceDTO { 
     Authorization: string
+    
     
 
 }
@@ -42,4 +43,16 @@ export interface Payload{
 export interface logOutFromAllDevicesDTO {
     userId: string;
 }
+export interface logoutDTO{
+    tokenPayload: {  sub: string;
+  username: string;
+  email: string;
+  deviceId?: string;
+  jti: string;}
+}
 
+export interface ResetPasswordDTO {
+    email: string;
+    newPassword: string;
+    otp: string;
+}

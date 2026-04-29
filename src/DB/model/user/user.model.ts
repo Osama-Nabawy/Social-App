@@ -9,11 +9,11 @@ const userSchema = new Schema<IUser>({
             return false
                 }
     },
-    phone: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
     profilePicture: { type: String },
-    role: { type: Number, enum: SYS_ROLE, default: SYS_ROLE.user },
-    provider: { type: Number, enum: SYS_PROVIDER, default: SYS_PROVIDER.system },
-    gender: { type: Number, enum: SYS_GENDER, default: SYS_GENDER.male },
+    role: { type: Number, enum: SYS_ROLE, default:SYS_ROLE.user },
+    provider: { type: Number, enum: SYS_PROVIDER, default:SYS_PROVIDER.system },
+    gender: { type: Number, enum: SYS_GENDER, default:SYS_GENDER.male },
       credentialUpdatedAt: {
     type: Date,
     default: Date.now(),

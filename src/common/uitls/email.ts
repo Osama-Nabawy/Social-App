@@ -1,14 +1,14 @@
 import nodemailer from "nodemailer";
 import { emailPassword } from "../../config";
-import { SendEmailOptions } from "../interface/email.interface";
+import { MailOptions } from "nodemailer/lib/json-transport";
 
 
 
-export const sendEmail = async ({
-  to,
+export const sendEmail = async (
+{  to,
   subject,
-  html,
-}: SendEmailOptions) => {
+  html,}:MailOptions
+) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",

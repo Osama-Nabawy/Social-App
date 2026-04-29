@@ -4,7 +4,7 @@ export interface IUser{
     email: string,
     userName: string,
     password: string,
-    phone?: string,
+    phoneNumber?: string,
     profilePicture?: string,
     role?: SYS_ROLE,
     gender?: SYS_GENDER,

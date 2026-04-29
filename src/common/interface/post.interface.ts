@@ -1,6 +1,11 @@
+import { Types } from "mongoose";
+
 export interface IPost {
-    userId: string;
+    userId: Types.ObjectId;
     content?: string;
-    image?: string;
+    image?: string[];
+            reactionCount?: number
+    commentCount?: number
+    shareCount?:number
     
 }
