@@ -136,16 +136,10 @@ async refreshTokenService(refreshTokenServiceDTO: refreshTokenServiceDTO) {
   return newTokens;
   };
   
-  async resetPassword({ email, newPassword, otp }: ResetPasswordDTO) {
+  async resetPassword({ email, newPassword }: ResetPasswordDTO) {
     const userExist = await this.userRepo.findOne({ email });
     if (!userExist) {
       throw new NotFoundException("User not found");
-    }
-    const otpDoc = await existsCache(`${email}:otp`);
-    if (!otpDoc) throw new BadRequestException("expired otp !");
-    const cachedOtp = await getCache(`${email}:otp`);
-    if (cachedOtp !== otp) {
-      throw new BadRequestException("invalid otp");
     }
     const hashedPassword = await hash(newPassword);
     await this.userRepo.updateOne({ email }, { password: hashedPassword });

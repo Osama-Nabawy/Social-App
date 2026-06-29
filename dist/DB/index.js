@@ -19,3 +19,5 @@ __exportStar(require("./redis.connection"), exports);
 __exportStar(require("./model/user/user.repository"), exports);
 __exportStar(require("./redis.repository"), exports);
 __exportStar(require("./model/post/post.repository"), exports);
+__exportStar(require("./model/comment/comment.repository"), exports);
+__exportStar(require("./model/user-reaction/user-reaction.repository"), exports);

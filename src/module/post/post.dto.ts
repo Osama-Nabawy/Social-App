@@ -1,5 +1,5 @@
 import z from "zod"
-import {BadRequestException} from "../../common";
+import {BadRequestException, SYS_REACTION} from "../../common";
 
 export interface CreatePostDTO{
     content?: string,
@@ -19,5 +19,5 @@ export const postSchema = z.object({
 
 export interface AddReactionDTO{
     postId: string,
-    reaction: number
+    reaction: SYS_REACTION
 }

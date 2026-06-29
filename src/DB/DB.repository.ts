@@ -6,7 +6,7 @@ export abstract class AbstractRepository<T>{
      * @param item ia a generic data which based on DB 
      */
 
-    public async create(item :T) {
+    public async create(item :Partial<T>) {
         const doc = new this._model(item)
         return doc.save()
     }

@@ -44,6 +44,14 @@ router.post("/refresh", async (req: Request, res: Response, next: NextFunction) 
         data: tokens,
     });
 });
+
+router.post("/forgot-password", async (req: Request, res: Response, next: NextFunction) => {
+    await authService.resetPassword(req.body);
+    res.status(200).json({
+        message: "Password reset successfully",
+        success: true,
+    });
+});
 router.post("/logout-all", isAuthenticated,async (req: Request, res: Response, next: NextFunction) => {
     await authService.logOutFromAllDevices(req.body);
     res.status(200).json({

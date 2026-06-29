@@ -97,17 +97,10 @@ class AuthService {
         return newTokens;
     }
     ;
-    async resetPassword({ email, newPassword, otp }) {
+    async resetPassword({ email, newPassword }) {
         const userExist = await this.userRepo.findOne({ email });
         if (!userExist) {
             throw new common_1.NotFoundException("User not found");
-        }
-        const otpDoc = await (0, DB_1.existsCache)(`${email}:otp`);
-        if (!otpDoc)
-            throw new common_1.BadRequestException("expired otp !");
-        const cachedOtp = await (0, DB_1.getCache)(`${email}:otp`);
-        if (cachedOtp !== otp) {
-            throw new common_1.BadRequestException("invalid otp");
         }
         const hashedPassword = await (0, common_1.hash)(newPassword);
         await this.userRepo.updateOne({ email }, { password: hashedPassword });

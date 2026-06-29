@@ -41,7 +41,11 @@ export class PostService {
     }
 
     async getpost(postId: Types.ObjectId) { 
-        return await this.postRepo.findOne({ _id: postId })
+        const postExist = await this.postRepo.findOne({ _id: postId })
+        if (!postExist) {
+            throw new NotFoundException("Post not found")
+        }
+        return postExist
     }
     async updatePost(postId: Types.ObjectId, userId: Types.ObjectId, updateData: CreatePostDTO) {
         const post = await this.postRepo.findOne({ _id: postId })
